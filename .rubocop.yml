@@ -1,0 +1,16 @@
+inherit_from: .rubocop_todo.yml
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - '*.gemspec'
