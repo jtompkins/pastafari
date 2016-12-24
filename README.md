@@ -1,8 +1,6 @@
 # Pastafari
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/pastafari`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Pastafari is a library for building simple finite state machines in Ruby.
 
 ## Installation
 
@@ -22,7 +20,53 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+# Define an FSM with the Pastafari FSM DSL:
+fsm = Pastafari::FSM.build do
+  # Set the order of operations with #transition.
+  # :before runs the current state's transition functions before processing the input.
+  # :after runs the transition function after input processing.
+  transition :after # :after is the default value
+
+  # Set the initial state:
+  initial_state :first_state
+  # If #initial_state isn't called, the first state defined by the DSL will be
+  # assumed to be the initial FSM state.
+
+  state :first_state do
+    # Define the input processing function:
+    process { |i| puts i }
+
+    # If this state can transition into another state, define the transition
+    # conditions:
+    transition_to(:second_state).when { |i| i == 1 }
+    # The transition function is a predicate - it should return a truthy or falsey
+    # value. If the function returns a truthy value, the FSM will transition into
+    # the new state.
+
+    # You can define as many transitions as you'd like:
+    transition_to(:third_state).when { |i| i == 2 }
+    # If a transition references a state that isn't defined, Pastafari will
+    # raise an error.    
+  end
+
+  state :second_state do
+    # The processing function MUST be called; if it isn't, Pastafari will
+    # raise an error.
+    process { |i| puts i / 2 }
+  end
+
+  state :third_state do
+    process { |i| puts i / 3 }
+
+    # Transition functions are optional.
+  end
+end
+
+# Run the FSM with #run. Pass in an array, or a value that can be converted to an
+# Array with #Array.
+fsm.run([1, 2, 3]) # => should print 1, 1, 1
+```
 
 ## Development
 
@@ -38,4 +82,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
