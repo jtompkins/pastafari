@@ -28,11 +28,9 @@ module Pastafari
     def process(input)
       transition!(input) if transition_at == :before
 
-      output = states[current_state].process(input)
-
-      transition!(input) if transition_at == :after
-
-      output
+      states[current_state].process(input).tap do
+        transition!(input) if transition_at == :after
+      end
     end
 
     def transition!(input)
